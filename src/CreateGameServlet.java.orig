@@ -59,6 +59,7 @@ public class CreateGameServlet extends HttpServlet {
 					+ "</head>");
 
         out.println("<body> "
+<<<<<<< HEAD
         		+ "		<!-- navigation bar -->"
         		+ "		<nav class=\"navbar navbar-inverse navbar-fixed-top\">"
         				+ "<div class=\"container\">"
@@ -75,6 +76,10 @@ public class CreateGameServlet extends HttpServlet {
 					+ "</nav>"
 					+ "<table class=\"table-bordered\" border = \"1\">");
         
+=======
+					+ "		<table class=\"table-bordered\" border = \"1\">");
+
+>>>>>>> e32c1aa88d2242c46b72e92b9a58f8b916f633f6
         URL url = new URL("http://plato.cs.virginia.edu/~rsr3ve/cs4640/Jeopardy_v3/submission.txt");
         java.io.InputStream is = url.openStream();
         if (is != null) {
@@ -85,7 +90,7 @@ public class CreateGameServlet extends HttpServlet {
 
             // We read the file line by line into fileData.
             while ((text = reader.readLine()) != null) {
-            	if(text.isEmpty()) {
+							if(text.isEmpty()) {
             		out.println("</td>"
             				+ "<td><label>Row:</label> <input type = \"text\" name = \"row\" class=\"form-control form-control-inline\"></input></td>"
             				+ "<td><label>Column:</label> <input type = \"text\" name = \"column\" class=\"form-control form-control-inline\"></td>"
@@ -93,7 +98,14 @@ public class CreateGameServlet extends HttpServlet {
             				+ "</tr>");
             	} else if (text.contains("Submission")) {
             		out.println("<tr><td>");
-            	} else if (!text.contains("Options") && !text.contains("Submission")){
+            	} else if (text.contains("Type"))
+            			{
+            	}
+            	else if (text.contains("Options"))
+            			{
+            	}
+            	else
+            	{
             		out.println(text + "<br>");
             	}
         }
@@ -102,8 +114,7 @@ public class CreateGameServlet extends HttpServlet {
         		+ "</body>"
         		+ "</html>");
         out.close();
-        }
-    }
+	}
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
