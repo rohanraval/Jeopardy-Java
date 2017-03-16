@@ -55,11 +55,25 @@ public class CreateGameServlet extends HttpServlet {
 					+ "<!-- Javascript file -->"
 					+ "<script src=\"create_question.js\"></script>"
 					+ "<!-- CSS file -->"
-					+ "<link href=\"stylesheet.css\" rel=\"stylesheet\">"
+					+ "<link href=\"WEB-INF/lib/stylesheet.css\" rel=\"stylesheet\">"
 					+ "</head>");
         
         out.println("<body> "
-					+ "		<table class=\"table-bordered\" border = \"1\">");
+        		+ "		<!-- navigation bar -->"
+        		+ "		<nav class=\"navbar navbar-inverse navbar-fixed-top\">"
+        				+ "<div class=\"container\">"
+        						+ "<div class=\"navbar-header\">"
+    								+ "<a class=\"navbar-brand\" href=\"#\">JEOPARDY!</a>"
+								+ "</div>"
+								+ "<ul class=\"nav navbar-nav\">"
+									+ "<li><a href=\"#\">Home</a></li>"
+									+ "<li><a href=\"create_question.php\">Create Questions</a></li>"
+									+ "<li class=\"active\"><a href=\"#\">Play the Game</a></li>"
+									+ "<li><a href=\"#\">About Us</a></li>"
+								+ "</ul>"
+						+ "</div>"
+					+ "</nav>"
+					+ "<table class=\"table-bordered\" border = \"1\">");
         
         URL url = new URL("http://plato.cs.virginia.edu/~rsr3ve/cs4640/Jeopardy_v3/submission.txt");
         java.io.InputStream is = url.openStream();
