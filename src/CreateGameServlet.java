@@ -23,7 +23,7 @@ import org.omg.CORBA.portable.InputStream;
 @WebServlet("/CreateGameServlet")
 public class CreateGameServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-       
+
     /**
      * @see HttpServlet#HttpServlet()
      */
@@ -37,11 +37,11 @@ public class CreateGameServlet extends HttpServlet {
 	 */
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
+
     	ServletContext context = getServletContext();
         response.setContentType ("text/html");
         PrintWriter out = response.getWriter();
-        
+
         out.println("<html>"
         			+ "<head>"
         			+ "<meta charset=\"utf-8\">"
@@ -57,10 +57,10 @@ public class CreateGameServlet extends HttpServlet {
 					+ "<!-- CSS file -->"
 					+ "<link href=\"stylesheet.css\" rel=\"stylesheet\">"
 					+ "</head>");
-        
+
         out.println("<body> "
 					+ "		<table class=\"table-bordered\" border = \"1\">");
-        
+
         URL url = new URL("http://plato.cs.virginia.edu/~rsr3ve/cs4640/Jeopardy_v3/submission.txt");
         java.io.InputStream is = url.openStream();
         if (is != null) {
@@ -68,23 +68,29 @@ public class CreateGameServlet extends HttpServlet {
             BufferedReader reader = new BufferedReader(isr);
             String text;
             ArrayList<String> submissions = new ArrayList<String>();
-            
+
             // We read the file line by line into fileData.
             while ((text = reader.readLine()) != null) {
-            	if(text.isEmpty()) {
+							if(text.isEmpty()) {
             		out.println("</td>"
-            				+ "<td>row</td>"
-            				+ "<td>col</td>"
-            				+ "<td>score</td>"
+            				+ "<td><label>Row:</label> <input type = \"text\" name = \"row\" class=\"form-control form-control-inline\"></input></td>"
+            				+ "<td><label>Column:</label> <input type = \"text\" name = \"column\" class=\"form-control form-control-inline\"></td>"
+            				+ "<td><label>Score:</label> <input type = \"text\" name = \"score\" class=\"form-control form-control-inline\"></td>"
             				+ "</tr>");
             	} else if (text.contains("Submission")) {
             		out.println("<tr><td>");
-            	} else {
+            	} else if (text.contains("Type"))
+            			{
+            	}
+            	else if (text.contains("Options"))
+            			{
+            	}
+            	else
+            	{
             		out.println(text + "<br>");
             	}
-            }
         }
-        
+
         out.println("</table>"
         		+ "</body>"
         		+ "</html>");
