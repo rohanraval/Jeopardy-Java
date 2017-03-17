@@ -72,22 +72,21 @@ public class CreateGameServlet extends HttpServlet {
             int counter = 0;
                         
             while ((text = reader.readLine()) != null) {
-            	counter++;
             	if(text.isEmpty()) {
             		out.println("</td>"
-            				+ "<td><label>Row </label> <input type = \"text\" name = \"row" + counter + "\" style=\"width:40%\"></input></td>"
-            				+ "<td><label>Column </label> <input type = \"text\" name = \"column" + counter + "\" style=\"width:40%\"></input></td>"
-            				+ "<td><label>Score </label> <input type = \"text\" name = \"score" + counter + "\" style=\"width:40%\"></input></td>"
-            				//+ "<td><label>Category:</label> <input type = \"text\" name = \"category" + "\"  style=\"td-align:justify; width:80px;\"></input></td>"
+            				+ "<td><label>Row </label> <input type = \"text\" name = \"row" +  "\" style=\"width:40%\"></input></td>"
+            				+ "<td><label>Column </label> <input type = \"text\" name = \"column" +  "\" style=\"width:40%\"></input></td>"
+            				+ "<td><label>Score </label> <input type = \"text\" name = \"score" +  "\" style=\"width:40%\"></input></td>"
             				+ "</tr>");
             	} else if (text.contains("Submission")) {
             		out.println("<tr><td name=\"submission\" >");
+                	counter++;
             	} else if(text.contains("Submitted Question")) { 
-            		out.println("<strong>"+text.substring(0,19)+"</strong>  <input name=\"question" + counter + "\" value=\" " + text.substring(22)+"\" style=\"width:70%\"><br>");
+            		out.println("<strong>"+text.substring(0,19)+"</strong>  <input name=\"question" +  "\" value=\" " + text.substring(22)+"\" style=\"width:70%\"><br>");
             	} else if(text.contains("Correct Option")) {
-            		out.println("<strong>"+text.substring(0,15)+"</strong>  <input name=\"answer" + counter + "\" value=\" " + text.substring(18)+"\" style=\"width:70%\"><br>");
+            		out.println("<strong>"+text.substring(0,15)+"</strong>  <input name=\"answer" +  "\" value=\" " + text.substring(18)+"\" style=\"width:70%\"><br>");
             	} else if(text.contains("Submitted Answer")) {
-            		out.println("<strong>"+text.substring(0,17)+"</strong>  <input name=\"answer" + counter + "\" value=\" " + text.substring(20)+"\" style=\"width:70%\"><br>");
+            		out.println("<strong>"+text.substring(0,17)+"</strong>  <input name=\"answer" +  "\" value=\" " + text.substring(20)+"\" style=\"width:70%\"><br>");
             	}
         	}
             out.println("<input hidden name=\"count\" value=\"" + counter + "\">");
@@ -113,40 +112,53 @@ public class CreateGameServlet extends HttpServlet {
         
         // FILE OUTPUT BASED ON POST DATA
         
-        FileWriter fileoutput = new FileWriter("/Users/Rohan/Documents/cs4640/apache/webapps/cs4640/Jeopardy_v4/src/postData.txt");
+        FileWriter fileoutput = new FileWriter("/Users/Rohan/Documents/cs4640/apache/webapps/cs4640/Jeopardy_v4/WebContent/WEB-INF/postData.txt");
+    
+        String[] rows = request.getParameterValues("row");
+        String[] cols = request.getParameterValues("column");
+        String[] scores = request.getParameterValues("score");
+        String[] questions = request.getParameterValues("question");
+        String[] answers = request.getParameterValues("answer");
+
+        int rowMax = 0;
+        int colMax = 0;
         
-//        String[] rows = request.getParameterValues("row");
-//        String[] cols = request.getParameterValues("column");
-//        String[] scores = request.getParameterValues("scores");
-//        String[] questions = request.getParameterValues("question");
-//        String[] answers = request.getParameterValues("answer");
-        
-        for(int i = 0; i <= Integer.parseInt(request.getParameter("count")); i++) {
-        	String question = request.getParameter("question" + i);
-        	String answer = request.getParameter("answer" + i);
-        	String row = request.getParameter("row" + i);
-        	String col = request.getParameter("column" + i);
-        	String score = request.getParameter("score" + i);
-        	
-        	if(row != null && row != "" && col != null && col != "" && score != null && score != "") {
-        		fileoutput.write("Question: " + question + "; ");
-        		fileoutput.write("Answer: " + answer + "; ");
-        		fileoutput.write("Row: " + row + "; ");
-        		fileoutput.write("Col: " + col + "; ");
-        		fileoutput.write("Score: " + score + ". \n");
+        int countSubmissions = Integer.parseInt(request.getParameter("count"));
+        int validSubmissions = 0;
+        for(int i = 0; i < countSubmissions; i++) {        	
+        	if(rows[i] != null && rows[i] != "" && cols[i] != null && cols[i] != "" && scores[i] != null && scores[i] != "") {
+        		validSubmissions++;
+        		fileoutput.write("Question: " + questions[i] + "; ");
+        		fileoutput.write("Answer: " + answers[i] + "; ");
+        		fileoutput.write("Row: " + rows[i] + "; ");
+        		fileoutput.write("Col: " + cols[i] + "; ");
+        		fileoutput.write("Score: " + scores[i] + ". \n");
+        		
+        		if(Integer.parseInt(rows[i]) > rowMax)
+            		rowMax = Integer.parseInt(rows[i]);
+            	if(Integer.parseInt(cols[i]) > colMax)
+            		colMax = Integer.parseInt(cols[i]);
         	}
-        	
         }
-        
-        
-        /*String[][] positions = new String[rows.length-1][cols.length-1];
+        out.println(rowMax);
+        out.println(colMax);
+
         
         //FILL GRID WITH POST DATA
-    	for(int currRow = 0; currRow < rows.length-1; currRow++) {
-    		for(int currCol = 0; currCol < cols.length-1; currCol++) {
-    			
+        String[][] positions = new String[rowMax+1][colMax+1];
+       
+    	for(int i = 0; i < validSubmissions; i++) {
+    		positions[ Integer.parseInt(rows[i]) ][ Integer.parseInt(cols[i]) ] = scores[i];
+    		out.println(positions[ Integer.parseInt(rows[i]) ][ Integer.parseInt(cols[i]) ]);
+    	}
+    	
+    	
+    	//print grid into table
+    	for(int currRow = 0; currRow < rowMax; currRow++) {
+    		for(int currCol = 0; currCol < colMax; currCol++) {
+    			out.println(positions[currRow][currCol]);
     		}
-    	}*/
+    	}
     	fileoutput.close();
 	}
 
