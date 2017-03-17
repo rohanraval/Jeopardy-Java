@@ -74,19 +74,19 @@ public class CreateGameServlet extends HttpServlet {
             while ((text = reader.readLine()) != null) {
             	if(text.isEmpty()) {
             		out.println("</td>"
-            				+ "<td><label>Row </label> <input type = \"text\" name = \"row" +  "\" style=\"width:40%\"></input></td>"
-            				+ "<td><label>Column </label> <input type = \"text\" name = \"column" +  "\" style=\"width:40%\"></input></td>"
-            				+ "<td><label>Score </label> <input type = \"text\" name = \"score" +  "\" style=\"width:40%\"></input></td>"
+            				+ "<td><label>Row </label> <input type = \"text\" name = \"row" +  "\" ></input></td>"
+            				+ "<td><label>Column </label> <input type = \"text\" name = \"column" +  "\" ></input></td>"
+            				+ "<td><label>Score </label> <input type = \"text\" name = \"score" +  "\" ></input></td>"
             				+ "</tr>");
             	} else if (text.contains("Submission")) {
             		out.println("<tr><td name=\"submission\" >");
                 	counter++;
             	} else if(text.contains("Submitted Question")) { 
-            		out.println("<strong>"+text.substring(0,19)+"</strong>  <input name=\"question" +  "\" value=\" " + text.substring(22)+"\" style=\"width:70%\"><br>");
+            		out.println("<strong>"+text.substring(0,19)+"</strong>  <input name=\"question" +  "\" value=\" " + text.substring(22)+"\"><br>");
             	} else if(text.contains("Correct Option")) {
-            		out.println("<strong>"+text.substring(0,15)+"</strong>  <input name=\"answer" +  "\" value=\" " + text.substring(18)+"\" style=\"width:70%\"><br>");
+            		out.println("<strong>"+text.substring(0,15)+"</strong>  <input name=\"answer" +  "\" value=\" " + text.substring(18)+"\"><br>");
             	} else if(text.contains("Submitted Answer")) {
-            		out.println("<strong>"+text.substring(0,17)+"</strong>  <input name=\"answer" +  "\" value=\" " + text.substring(20)+"\" style=\"width:70%\"><br>");
+            		out.println("<strong>"+text.substring(0,17)+"</strong>  <input name=\"answer" +  "\" value=\" " + text.substring(20)+"\"><br>");
             	}
         	}
             out.println("<input hidden name=\"count\" value=\"" + counter + "\">");
@@ -110,8 +110,7 @@ public class CreateGameServlet extends HttpServlet {
         response.setContentType ("text/html");
         PrintWriter out = response.getWriter();
         
-        // FILE OUTPUT BASED ON POST DATA
-        
+        // FILE OUTPUT BASED ON POST DATA       
         FileWriter fileoutput = new FileWriter("/Users/Rohan/Documents/cs4640/apache/webapps/cs4640/Jeopardy_v4/WebContent/WEB-INF/postData.txt");
     
         String[] rows = request.getParameterValues("row");
@@ -140,26 +139,36 @@ public class CreateGameServlet extends HttpServlet {
             		colMax = Integer.parseInt(cols[i]);
         	}
         }
-        out.println(rowMax);
-        out.println(colMax);
+    	fileoutput.close();
 
         
         //FILL GRID WITH POST DATA
         String[][] positions = new String[rowMax+1][colMax+1];
-       
-    	for(int i = 0; i < validSubmissions; i++) {
-    		positions[ Integer.parseInt(rows[i]) ][ Integer.parseInt(cols[i]) ] = scores[i];
-    		out.println(positions[ Integer.parseInt(rows[i]) ][ Integer.parseInt(cols[i]) ]);
-    	}
-    	
-    	
-    	//print grid into table
-    	for(int currRow = 0; currRow < rowMax; currRow++) {
-    		for(int currCol = 0; currCol < colMax; currCol++) {
-    			out.println(positions[currRow][currCol]);
+        
+        //set grid cells to blank first
+        for(int currRow = 1; currRow <= rowMax; currRow++) {
+    		for(int currCol = 1; currCol <= colMax; currCol++) {
+    			positions[currRow][currCol] = " ";
     		}
     	}
-    	fileoutput.close();
+       
+        //populate required grid cells to proper score value
+    	for(int i = 0; i < validSubmissions; i++) {
+    		positions[ Integer.parseInt(rows[i]) ][ Integer.parseInt(cols[i]) ] = scores[i];
+    	}  	
+    	
+    	out.println("<center>"
+    	+ "	<table class=\"table\" border = \"3\" table-align =\"center\"> " + "<h3> Q/A Jeopardy Game Board by Vamshi Garikapati and Rohan Raval </h3>"
+    	);
+    	//print grid into table
+    	for(int currRow = 1; currRow <= rowMax; currRow++) {
+    		out.println("<tr>");
+    		for(int currCol = 1; currCol <= colMax; currCol++) {
+    			out.println("<td>" + positions[currRow][currCol] + "</td>");
+    		}
+    		out.println("</tr>");
+    	}
+    	out.println("</table></center>");
 	}
 
 }
