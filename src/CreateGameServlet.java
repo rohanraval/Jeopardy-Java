@@ -2,6 +2,7 @@
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -29,7 +30,6 @@ public class CreateGameServlet extends HttpServlet {
      */
     public CreateGameServlet() {
         super();
-        // TODO Auto-generated constructor stub
     }
 
 	/**
@@ -69,17 +69,19 @@ public class CreateGameServlet extends HttpServlet {
             InputStreamReader isr = new InputStreamReader(is);
             BufferedReader reader = new BufferedReader(isr);
             String text;
+            int counter = 0;
                         
             while ((text = reader.readLine()) != null) {
+            	counter++;
             	if(text.isEmpty()) {
             		out.println("</td>"
             				//+ "<td><label>Row:</label> <input type = \"text\" name = \"row" + counter +"\"  style=\"td-align:justify; width:50px;\"></input></td>"
             				//+ "<td><label>Column:</label> <input type = \"text\" name = \"column\"  style=\"td-align:justify; width:50px;\"></input></td>"
-            				+ "<td><label>Score:</label> <input type = \"text\" name = \"score\"  style=\"td-align:justify; width:80px;\"></input></td>"
-            				+ "<td><label>Category:</label> <input type = \"text\" name = \"category\"  style=\"td-align:justify; width:80px;\"></input></td>"
+            				+ "<td><label>Score:</label> <input type = \"text\" name = \"score" + "\"  style=\"td-align:justify; width:80px;\"></input></td>"
+            				+ "<td><label>Category:</label> <input type = \"text\" name = \"category" + "\"  style=\"td-align:justify; width:80px;\"></input></td>"
             				+ "</tr>");
             	} else if (text.contains("Submission")) {
-            		out.println("<tr><td>");
+            		out.println("<tr><td name=\"submission" + counter + "\" >");
             	} else if(text.contains("Submitted Question")) {
             		out.println("<strong>"+text.substring(0,20)+"</strong>" + text.substring(20)+"<br>");
             	} else if(text.contains("Submitted Answer")) {
@@ -91,9 +93,10 @@ public class CreateGameServlet extends HttpServlet {
             	}
         	}
         }
-        out.println("</table> "
+        out.println("</table>"
         		+ "<button type=\"submit\" class=\"btn btn-primary\" formaction=\"http://plato.cs.virginia.edu/~rsr3ve/cs4640/Jeopardy_v3/create_question.php\">Add Q/A</button>  "
         		+ "<input type=\"submit\" value=\"Create Game\" class=\"btn btn-primary\">"
+        		+ " </form>"
         		+ "</center>"
         		+ "</body>"
         		+ "</html>");
@@ -104,8 +107,19 @@ public class CreateGameServlet extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		doGet(request, response);
+		
+		ServletContext context = getServletContext();
+        response.setContentType ("text/html");
+        PrintWriter out = response.getWriter();
+        
+        FileWriter fileoutput = new FileWriter("../WebContent/WEB-INF/postData.txt");
+        
+    	String[] scores = request.getParameterValues("score");
+    	String[] categories = request.getParameterValues("category");
+    	for(int i = 0; i < scores.length; i++) {
+    		fileoutput.write(scores[i] + " " + categories[i] + "\n");
+    	}
+    	fileoutput.close();
 	}
 
 }
