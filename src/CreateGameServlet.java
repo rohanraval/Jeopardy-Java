@@ -1,4 +1,4 @@
-
+// Vamshi Garikapati (vkg5xt) and Rohan Raval (rsr3ve)
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -23,7 +23,7 @@ import org.omg.CORBA.portable.InputStream;
 @WebServlet("/CreateGameServlet")
 public class CreateGameServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-
+       
     /**
      * @see HttpServlet#HttpServlet()
      */
@@ -37,11 +37,11 @@ public class CreateGameServlet extends HttpServlet {
 	 */
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
+		
     	ServletContext context = getServletContext();
         response.setContentType ("text/html");
         PrintWriter out = response.getWriter();
-
+        
         out.println("<html>"
         			+ "<head>"
         			+ "<meta charset=\"utf-8\">"
@@ -55,25 +55,13 @@ public class CreateGameServlet extends HttpServlet {
 					+ "<!-- Javascript file -->"
 					+ "<script src=\"create_question.js\"></script>"
 					+ "<!-- CSS file -->"
-					+ "<link href=\"WEB-INF/lib/stylesheet.css\" rel=\"stylesheet\">"
+					+ "<link href=\"stylesheet.css\" rel=\"stylesheet\">"
 					+ "</head>");
-
+        
         out.println("<body> "
-        		+ "		<!-- navigation bar -->"
-        		+ "		<nav class=\"navbar navbar-inverse navbar-fixed-top\">"
-        				+ "<div class=\"container\">"
-        						+ "<div class=\"navbar-header\">"
-    								+ "<a class=\"navbar-brand\" href=\"#\">JEOPARDY!</a>"
-								+ "</div>"
-								+ "<ul class=\"nav navbar-nav\">"
-									+ "<li><a href=\"#\">Home</a></li>"
-									+ "<li><a href=\"create_question.php\">Create Questions</a></li>"
-									+ "<li class=\"active\"><a href=\"#\">Play the Game</a></li>"
-									+ "<li><a href=\"#\">About Us</a></li>"
-								+ "</ul>"
-						+ "</div>"
-					+ "</nav>"
-					+ "<table class=\"table-bordered\" border = \"1\">");
+        		+ " <center> "
+        		+ "	<form method=\"post\">"
+					+ "	<table class=\"table\" border = \"3\" table-align =\"center\"> " + "<h3> Q/A Jeopardy Menu by Vamshi Garikapati and Rohan Raval </h3>");
         
         URL url = new URL("http://plato.cs.virginia.edu/~rsr3ve/cs4640/Jeopardy_v3/submission.txt");
         java.io.InputStream is = url.openStream();
@@ -81,29 +69,36 @@ public class CreateGameServlet extends HttpServlet {
             InputStreamReader isr = new InputStreamReader(is);
             BufferedReader reader = new BufferedReader(isr);
             String text;
-            ArrayList<String> submissions = new ArrayList<String>();
-
-            // We read the file line by line into fileData.
+                        
             while ((text = reader.readLine()) != null) {
             	if(text.isEmpty()) {
             		out.println("</td>"
-            				+ "<td><label>Row:</label> <input type = \"text\" name = \"row\" class=\"form-control form-control-inline\"></input></td>"
-            				+ "<td><label>Column:</label> <input type = \"text\" name = \"column\" class=\"form-control form-control-inline\"></td>"
-            				+ "<td><label>Score:</label> <input type = \"text\" name = \"score\" class=\"form-control form-control-inline\"></td>"
+            				//+ "<td><label>Row:</label> <input type = \"text\" name = \"row" + counter +"\"  style=\"td-align:justify; width:50px;\"></input></td>"
+            				//+ "<td><label>Column:</label> <input type = \"text\" name = \"column\"  style=\"td-align:justify; width:50px;\"></input></td>"
+            				+ "<td><label>Score:</label> <input type = \"text\" name = \"score\"  style=\"td-align:justify; width:80px;\"></input></td>"
+            				+ "<td><label>Category:</label> <input type = \"text\" name = \"category\"  style=\"td-align:justify; width:80px;\"></input></td>"
             				+ "</tr>");
             	} else if (text.contains("Submission")) {
             		out.println("<tr><td>");
-            	} else if (!text.contains("Options") && !text.contains("Submission")){
-            		out.println(text + "<br>");
-            	}
-        }
+            	} else if(text.contains("Submitted Question")) {
+            		out.println("<strong>"+text.substring(0,20)+"</strong>" + text.substring(20)+"<br>");
+            	} else if(text.contains("Submitted Answer")) {
+            		out.println("<strong>"+text.substring(0,18)+"</strong>" + text.substring(18)+"<br>");
 
-        out.println("</table>"
+            	} else if (!text.contains("Options") && !text.contains("Question Type")) {
+            		out.println("<strong>"+text.substring(0,15)+"</strong>" + text.substring(15)+"<br>");
+
+            	}
+        	}
+        }
+        out.println("</table> "
+        		+ "<button type=\"submit\" class=\"btn btn-primary\" formaction=\"http://plato.cs.virginia.edu/~rsr3ve/cs4640/Jeopardy_v3/create_question.php\">Add Q/A</button>  "
+        		+ "<input type=\"submit\" value=\"Create Game\" class=\"btn btn-primary\">"
+        		+ "</center>"
         		+ "</body>"
         		+ "</html>");
         out.close();
-        }
-    }
+	}
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
