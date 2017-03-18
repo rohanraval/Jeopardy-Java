@@ -50,19 +50,12 @@ public class CreateGameServlet extends HttpServlet {
 					+ "<title>Jeopardy!</title>"
 					+ "<!-- Bootstrap -->"
 					+ "<link href=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css\" rel=\"stylesheet\" integrity=\"sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u\" crossorigin=\"anonymous\">"
-					+ "<!-- jQuery library -->"
-					+ "<script src=\"https://code.jquery.com/jquery-3.1.1.min.js\" integrity=\"sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=\"   crossorigin=\"anonymous\"></script>"
-					+ "<!-- Javascript file -->"
-					+ "<script src=\"create_question.js\"></script>"
-					+ "<!-- CSS file -->"
-					+ "<link href=\"stylesheet.css\" rel=\"stylesheet\">"
 					+ "</head>");
         
         out.println("<body> "
         		+ " <center> "
         		+ "	<form method=\"post\">"
-					+ "	<table class=\"table\" border = \"3\" table-align =\"center\"> " + "<h3> Q/A Jeopardy Menu by Vamshi Garikapati and Rohan Raval </h3>");
-        
+        	     + " <table class=\"table\" border = \"3\" table-align =\"center\"> " + "<h3> Jeopardy Menu by Vamshi Garikapati and Rohan Raval </h3>");        
         URL url = new URL("http://plato.cs.virginia.edu/~rsr3ve/cs4640/Jeopardy_v3/submission.txt");
         java.io.InputStream is = url.openStream();
         if (is != null) {
@@ -111,7 +104,7 @@ public class CreateGameServlet extends HttpServlet {
         PrintWriter out = response.getWriter();
         
         // FILE OUTPUT BASED ON POST DATA       
-        FileWriter fileoutput = new FileWriter("/Users/Rohan/Documents/cs4640/apache/webapps/cs4640/Jeopardy_v4/WebContent/WEB-INF/postData.txt");
+        FileWriter fileoutput = new FileWriter("/Users/mac/Documents/workspace/Servlets/WebContent/WEB-INF/lib/post.txt"); //CHANGE TO YOUR LOCAL TEXT FILE
     
         String[] rows = request.getParameterValues("row");
         String[] cols = request.getParameterValues("column");
@@ -148,7 +141,7 @@ public class CreateGameServlet extends HttpServlet {
         //set grid cells to blank first
         for(int currRow = 1; currRow <= rowMax; currRow++) {
     		for(int currCol = 1; currCol <= colMax; currCol++) {
-    			positions[currRow][currCol] = " ";
+    			positions[currRow][currCol] = "n/a";
     		}
     	}
        
@@ -157,18 +150,25 @@ public class CreateGameServlet extends HttpServlet {
     		positions[ Integer.parseInt(rows[i]) ][ Integer.parseInt(cols[i]) ] = scores[i];
     	}  	
     	
-    	out.println("<center>"
-    	+ "	<table class=\"table\" border = \"3\" table-align =\"center\"> " + "<h3> Q/A Jeopardy Game Board by Vamshi Garikapati and Rohan Raval </h3>"
-    	);
+    	out.println("<html> <body> <center>" 
+    	+ "<h3>Jeopardy Game Board by Vamshi Garikapati and Rohan Raval </h3><br>"
+    	+ "	<table class=\"table\" bgcolor=\"#060CE9\" style =\"border:2px solid black; font-size: 30px; font-family: Arial, Helvetica, sans-serif; \" table-align =\"center\" width = \"50%\"> "
+    	+ " <form method=\"GET\" action = \"CreateGameServlet\" >");
+    	
     	//print grid into table
     	for(int currRow = 1; currRow <= rowMax; currRow++) {
-    		out.println("<tr>");
+    		out.println("<tr style =\"border:1px solid black;\" width = \"100%\">");
     		for(int currCol = 1; currCol <= colMax; currCol++) {
-    			out.println("<td>" + positions[currRow][currCol] + "</td>");
+    			out.println("<td style =\"border:1px solid black;\" ><font color=\"yellow\"><br><center>" + positions[currRow][currCol] + "</center></br></font></td>");
     		}
     		out.println("</tr>");
     	}
-    	out.println("</table></center>");
+    	
+    	out.println("</table>"
+    			+ "<button class=\"btn btn-primary\"> Go Back </button>"
+    			+ "</form>"
+    			+ "</center>"
+    			+ "</body> </html>");
 	}
 
 }
