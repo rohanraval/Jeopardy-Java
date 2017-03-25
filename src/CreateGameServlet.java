@@ -104,7 +104,7 @@ public class CreateGameServlet extends HttpServlet {
         PrintWriter out = response.getWriter();
         
         // FILE OUTPUT BASED ON POST DATA       
-        FileWriter fileoutput = new FileWriter("/Users/mac/Documents/workspace/Servlets/WebContent/WEB-INF/lib/post.txt"); //CHANGE TO YOUR LOCAL TEXT FILE
+        FileWriter fileoutput = new FileWriter("/Users/Rohan/Documents/cs4640/apache/webapps/cs4640/Jeopardy_v4/src/postData.txt"); //CHANGE TO YOUR LOCAL TEXT FILE
     
         String[] rows = request.getParameterValues("row");
         String[] cols = request.getParameterValues("column");
