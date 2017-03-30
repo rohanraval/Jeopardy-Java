@@ -68,6 +68,7 @@ public class BrowseGameServlet extends HttpServlet {
 
 		      String line = null;
 		      String user = null;
+		      int gameID = 0;
 		      out.println("<tr>"
 		    			+ "<th style = \"padding: 0\"><h3>Username</h3></th>" 
           				+ "<td style = \"padding: 0\"><h3>Game ID</h3></td>"
@@ -78,9 +79,10 @@ public class BrowseGameServlet extends HttpServlet {
 		    		  user = line.substring(10);
 		    	  }
 		    	  if(line.contains("GameID")) { 
+		    		  gameID = Integer.parseInt(line.substring(8));
 			    	  out.println("<tr>"
 			    			+ "<th>" + user + "</th>" 
-	          				+ "<td>" + line.substring(8) + "&nbsp;&nbsp;"
+	          				+ "<td>" + gameID + "&nbsp;&nbsp;"
       						+ "</td>"
       						+ "<td>" 
 	          				+ "<form method=\"GET\">");
@@ -97,12 +99,16 @@ public class BrowseGameServlet extends HttpServlet {
 			    	  }
 		      }
         out.println("</table>"
-        		+ "<form method=\"GET\" action=\"CreateGameServlet\"><button class=\"btn btn-primary\"> Create New Game </button></form> "
+        		+ "<form method=\"GET\" action=\"CreateGameServlet\">"
+        		+ "		<input hidden name=\"gameid\" value=\"" + gameID + "\">"
+        		+ "		<button type=\"submit\" class=\"btn btn-primary\"> Create New Game </button>"
+        		+ "</form> "
         		+ "<form method=\"GET\" action=\"LogoutServlet\"><button class=\"btn btn-primary\"> Logout </button></form> "
             	+ "</center>"
         		+ "</body>"
         		+ "</html>");
         out.close();
+        
 	}
 
 	/**
