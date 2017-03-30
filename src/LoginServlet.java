@@ -85,12 +85,9 @@ public class LoginServlet extends HttpServlet {
                 FileReader fr = new FileReader(file);
                 BufferedReader br = new BufferedReader(fr);                                                 
                 String data;
-            	System.out.println(loginInfo+"outside");
 
                 while((data = br.readLine()) != null) 
                 {
-                	System.out.println(loginInfo+"inside");
-
                     if(data.equals(loginInfo)) {
                     	isLoginValid = true;
                     	break;
@@ -109,14 +106,13 @@ public class LoginServlet extends HttpServlet {
             		System.out.println("invalidated");
             		session.invalidate(); // if a session exists, delete it
             	}
-            	response.sendRedirect("http://localhost:8080/Jeopardy_v5/LoginServlet");
+            	response.sendRedirect("http://localhost:8080/Jeopardy_v4/LoginServlet");
             	
         	} else {
         		//if old session exists, delete it
             	HttpSession session = request.getSession(false);
-            	if(session != null) {
+            	if(session != null)
             		session.invalidate(); // if a session exists, delete it
-            	}
             	
             	// create a new session
             	session = request.getSession(true);
@@ -124,7 +120,7 @@ public class LoginServlet extends HttpServlet {
         	    session.setAttribute("username", request.getParameter("username"));
         	    session.setAttribute("password", request.getParameter("password"));
 
-        		response.sendRedirect("http://localhost:8080/Jeopardy_v5/BrowseGameServlet");
+        		response.sendRedirect("http://localhost:8080/Jeopardy_v4/BrowseGameServlet");
 
         	}
         }
@@ -146,9 +142,8 @@ public class LoginServlet extends HttpServlet {
         	session = request.getSession(true);
         	// put username data into session
     	    session.setAttribute("username", request.getParameter("username"));
-    	    session.setAttribute("password", request.getParameter("password"));
 
-    		response.sendRedirect("http://localhost:8080/Jeopardy_v5/BrowseGameServlet");
+    		response.sendRedirect("http://localhost:8080/Jeopardy_v4/BrowseGameServlet");
 
         }
 		

@@ -41,6 +41,10 @@ public class BrowseGameServlet extends HttpServlet {
         response.setContentType ("text/html");
         PrintWriter out = response.getWriter();
         
+        
+        
+        
+        
         out.println("<html>"
         			+ "<head>"
         			+ "<meta charset=\"utf-8\">"
@@ -56,41 +60,45 @@ public class BrowseGameServlet extends HttpServlet {
         		+ "	<form method=\"post\">"
         	     + " <table class=\"table\" border = \"3\"  table-align =\"center\"> " + "<h3> Browse Menu </h3>");        
 
-		String filename = "/Users/mac/Desktop/user-info.txt";
+		String filename = "/Users/Rohan/Documents/cs4640/apache/webapps/cs4640/Jeopardy_v4/src/user-info.txt";
 		FileInputStream fis =
-		        new FileInputStream("/Users/Rohan/Documents/cs4640/apache/webapps/cs4640/Jeopardy_v5/src/postData.txt");
+		        new FileInputStream("/Users/Rohan/Documents/cs4640/apache/webapps/cs4640/Jeopardy_v4/src/postData.txt");
 		      InputStreamReader isr = new InputStreamReader(fis);
 		      BufferedReader reader = new BufferedReader(isr);		    	
 
 		      String line = null;
 		      String user = null;
 		      out.println("<tr>"
-		    			+ "<th><h3> Username</h3></th>" 
-          				+ "<td style = \"padding: 0\"><h3> GameID  </h3></td>"
+		    			+ "<th style = \"padding: 0\"><h3>Username</h3></th>" 
+          				+ "<td style = \"padding: 0\"><h3>Game ID</h3></td>"
+          				+ "<td style = \"padding: 0\"><h3>Options</h3></td>"
           				+ "</tr>");
 		      while ((line = reader.readLine()) != null) {
-		    	  if(line.contains("Username"))
-		    	  {
-		    	  user = line.substring(10);
-		    	  
+		    	  if(line.contains("Username")) {
+		    		  user = line.substring(10);
 		    	  }
-		    	  if(line.contains("GameID"))
-		    	  { 
-		    	  out.println("<tr>"
-		    			+ "<th >" + user + "</th>" 
-          				+ "<td style = \"padding: 0\">     " + line.substring(8) 
-          				+ "<form method=\"GET\" action = \"CreateGameServlet\">										"
-                    	+ "				<button class=\"btn btn-primary\" formaction=\"UpdateGameServlet\"> Update </button>          			"
-          				+ "<button class=\"btn btn-primary\" formaction=\"DeleteGameServlet\"> Delete </button>         			 "
-                    	+ "<button class=\"btn btn-primary\"> Play </button>   				 "    
-                    	+ " </form>"
-          				+ "</td>"
-                    	+ "<input hidden name=\"username\" value =\"" + user + "\">"
-                    	+ "<input type = \"hidden\" name=\"username\" value =\"" + line.substring(8) + "\">"
-          				+ "</tr>");	
-		    	  }
+		    	  if(line.contains("GameID")) { 
+			    	  out.println("<tr>"
+			    			+ "<th>" + user + "</th>" 
+	          				+ "<td>" + line.substring(8) + "&nbsp;&nbsp;"
+      						+ "</td>"
+      						+ "<td>" 
+	          				+ "<form method=\"GET\">");
+	                  out.println(	"<button class=\"btn btn-primary\"> Play </button>");    
+			    	  if(request.getSession(false).getAttribute("username").equals(user)) {
+			    		  out.println("<button class=\"btn btn-primary\" formaction=\"UpdateGameServlet\"> Update </button>          			"
+		                    		+ "<button class=\"btn btn-primary\" formaction=\"DeleteGameServlet\"> Delete </button>");
+			          }
+			    	  out.println("</form>"
+	          				+ "</td>"
+	                    	+ "<input hidden name=\"username\" value =\"" + user + "\">"
+	                    	+ "<input type = \"hidden\" name=\"username\" value =\"" + line.substring(8) + "\">"
+	          				+ "</tr>");	
+			    	  }
 		      }
         out.println("</table>"
+        		+ "<form method=\"GET\" action=\"CreateGameServlet\"><button class=\"btn btn-primary\"> Create New Game </button></form> "
+        		+ "<form method=\"GET\" action=\"LogoutServlet\"><button class=\"btn btn-primary\"> Logout </button></form> "
             	+ "</center>"
         		+ "</body>"
         		+ "</html>");
