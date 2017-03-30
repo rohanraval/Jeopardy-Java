@@ -85,10 +85,17 @@ public class CreateGameServlet extends HttpServlet {
             out.println("<input hidden name=\"count\" value=\"" + counter + "\">");
         }
         out.println("</table>"
+        		+ "<h4> Options for Current Game: </h4>"
         		+ "<button type=\"submit\" class=\"btn btn-primary\" formaction=\"http://plato.cs.virginia.edu/~rsr3ve/cs4640/Jeopardy_v3/create_question.php\">Add Q/A</button>  "
-        		+ "<input type=\"submit\" value=\"Create Game\" class=\"btn btn-primary\">"
+        		+ "<input type=\"submit\" value=\"Create This Game!\" class=\"btn btn-primary\">"
         		+ " </form>"
-        		+ "</center>"
+        		+ "</br><h4> Options for User-Specific Games: </h4>"
+        		+ "<form method=\"GET\" action = \"CreateGameServlet\">"
+        		+ "<h6> Enter Username </h6> <input type=\"text\" name=\"username\"></br>"
+        		+ "<h6> Enter GameID </h6> <input type=\"text\" name=\"gameid\"</br>"
+            	+ "<center></br><button type=\"submit\" class=\"btn btn-primary\" formaction=\"CreateUserGameServlet\"> Create New Game </button>          " + "<button class=\"btn btn-primary\" formaction=\"UpdateGameServlet\"> Update an Existing Game </button>          " + "<button class=\"btn btn-primary\" formaction=\"DeleteGameServlet\"> Delete an Existing Game </button>          </center>"
+            	+ " </form>"
+            	+ "</center>"
         		+ "</body>"
         		+ "</html>");
         out.close();
