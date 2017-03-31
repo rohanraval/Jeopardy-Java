@@ -37,13 +37,16 @@ public class BrowseGameServlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+		//login validation
+		if(request.getSession(false) == null) { //user is not logged in!
+	    	response.sendRedirect("http://localhost:8080/Jeopardy_v4/LoginServlet"); //redirect to login page
+	    	return;
+		}
+		
 		ServletContext context = getServletContext();
         response.setContentType ("text/html");
         PrintWriter out = response.getWriter();
-        
-        
-        
-        
         
         out.println("<html>"
         			+ "<head>"
@@ -58,9 +61,8 @@ public class BrowseGameServlet extends HttpServlet {
         out.println("<body> "
         		+ " <center> "
         		+ "	<form method=\"post\">"
-        	     + " <table class=\"table\" border = \"3\"  table-align =\"center\"> " + "<h3> Browse Menu </h3>");        
+        	     + " <table class=\"table\" border = \"3\"  table-align =\"center\"> " + "<h3> Browse Menu for " + request.getSession().getAttribute("username") + "</h3>");        
 
-		String filename = "/Users/Rohan/Documents/cs4640/apache/webapps/cs4640/Jeopardy_v4/src/user-info.txt";
 		FileInputStream fis =
 		        new FileInputStream("/Users/Rohan/Documents/cs4640/apache/webapps/cs4640/Jeopardy_v4/src/postData.txt");
 		      InputStreamReader isr = new InputStreamReader(fis);
@@ -68,26 +70,34 @@ public class BrowseGameServlet extends HttpServlet {
 
 		      String line = null;
 		      String user = null;
+		      int tempID = 0;
 		      int gameID = 0;
+		      boolean setter = false;
 		      out.println("<tr>"
 		    			+ "<th style = \"padding: 0\"><h3>Username</h3></th>" 
           				+ "<td style = \"padding: 0\"><h3>Game ID</h3></td>"
           				+ "<td style = \"padding: 0\"><h3>Options</h3></td>"
           				+ "</tr>");
 		      while ((line = reader.readLine()) != null) {
-		    	  if(line.contains("Username")) {
-		    		  user = line.substring(10);
-		    	  }
-		    	  if(line.contains("GameID")) { 
+		    	  if(line.contains("GameID")) {
 		    		  gameID = Integer.parseInt(line.substring(8));
+		    		  tempID = gameID;
+		    		  System.out.println(tempID);
+		    		  setter = true;
+		    		  
+		    	  }
+		    	  if(line.contains("Username:") && setter == true ) { 
+		    		  setter = false;
+		    		  user = line.substring(10);
 			    	  out.println("<tr>"
 			    			+ "<th>" + user + "</th>" 
-	          				+ "<td>" + gameID + "&nbsp;&nbsp;"
+	          				+ "<td>" + tempID + "&nbsp;&nbsp;"
       						+ "</td>"
       						+ "<td>" 
 	          				+ "<form method=\"GET\">");
 	                  out.println(	"<button class=\"btn btn-primary\"> Play </button>");    
 			    	  if(request.getSession(false).getAttribute("username").equals(user)) {
+			    		  out.println("<input hidden name=\"gameid\" value=\"" + gameID + "\" >");
 			    		  out.println("<button class=\"btn btn-primary\" formaction=\"UpdateGameServlet\"> Update </button>          			"
 		                    		+ "<button class=\"btn btn-primary\" formaction=\"DeleteGameServlet\"> Delete </button>");
 			          }
@@ -99,16 +109,16 @@ public class BrowseGameServlet extends HttpServlet {
 			    	  }
 		      }
         out.println("</table>"
-        		+ "<form method=\"GET\" action=\"CreateGameServlet\">"
-        		+ "		<input hidden name=\"gameid\" value=\"" + gameID + "\">"
-        		+ "		<button type=\"submit\" class=\"btn btn-primary\"> Create New Game </button>"
-        		+ "</form> "
-        		+ "<form method=\"GET\" action=\"LogoutServlet\"><button class=\"btn btn-primary\"> Logout </button></form> "
+        		+ "<button type=\"submit\" formaction=\"CreateGameServlet\" formmethod=\"GET\" class=\"btn btn-primary\"> Create New Game </button> &nbsp;&nbsp;"
+        		+ "<button type=\"submit\" formmethod=\"GET\" formaction=\"LogoutServlet\" class=\"btn btn-primary\"> Logout </button></form> "
             	+ "</center>"
         		+ "</body>"
         		+ "</html>");
         out.close();
         
+       // set session to most recent gameID
+       HttpSession session = request.getSession(false);
+       session.setAttribute("highest_gameid", gameID);
 	}
 
 	/**

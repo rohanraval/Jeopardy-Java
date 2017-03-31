@@ -1,19 +1,21 @@
 Username: rohan
-GameID: 1
-Question:  A Short Question; Answer:  A short answer; Row: 1; Col: 1; Score: 100. 
-Question:  Multiple Choice question; Answer:  ; Row: 1; Col: 2; Score: 100. 
-Question:  A true or false; Answer:  False; Row: 2; Col: 1; Score: 200. 
-Question:  MCQ; Answer:  3; Row: 2; Col: 2; Score: 200. 
-
-Username: vamshi
+Question:  How are you?; Answer:  Good!; Row: 1; Col: 1; Score: 10.
+ 
 GameID: 2
-Question:  A Short Question; Answer:  A short answer; Row: 1; Col: 1; Score: 100. 
-Question:  Multiple Choice question; Answer:  ; Row: 1; Col: 2; Score: 100. 
-Question:  A true or false; Answer:  False; Row: 2; Col: 1; Score: 200. 
-Question:  MCQ; Answer:  3; Row: 2; Col: 2; Score: 200.
+Username: vamshi
+Question:  How are you?; Answer:  Good!; Row: 1; Col: 1; Score: 999. 
 
 Username: rohan
-GameID: 3
-Question:  A Short Question; Answer:  A short answer; Row: 5; Col: 5; Score: 5. 
+Question:  How are you?; Answer:  Good!; Row: 5; Col: 5; Score: 5. 
 
+Username: rohan
+Question:  How are you?; Answer:  Good!; Row: 1; Col: 9; Score: 990. 
 
+Username: rohan
+Question:  How are you?; Answer:  Good!; Row: 1; Col: 1; Score: 999. 
+
+Username: rohan
+Question:  How are you?; Answer:  Good!; Row: 1; Col: 1; Score: 999. 
+
+Username: rohan
+Question:  How are you?; Answer:  Good!; Row: 1; Col: 1; Score: 999. 

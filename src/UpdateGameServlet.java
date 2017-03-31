@@ -1,7 +1,10 @@
 // Vamshi Garikapati (vkg5xt) and Rohan Raval (rsr3ve)
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -19,7 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.omg.CORBA.portable.InputStream;
 
 /**
- * Servlet implementation class UpdateGameServlet
+ * Servlet implementation class CreateGameServlet
  */
 @WebServlet("/UpdateGameServlet")
 public class UpdateGameServlet extends HttpServlet {
@@ -55,34 +58,35 @@ public class UpdateGameServlet extends HttpServlet {
         out.println("<body> "
         		+ " <center> "
         		+ "	<form method=\"post\">"
-        	     + " <table class=\"table\" border = \"3\" table-align =\"center\"> " + "<h3> Jeopardy Menu by Vamshi Garikapati and Rohan Raval </h3>");        
-        URL url = new URL("http://plato.cs.virginia.edu/~rsr3ve/cs4640/Jeopardy_v3/submission.txt");
-        java.io.InputStream is = url.openStream();
+        		+ " <table class=\"table\" border = \"3\" table-align =\"center\"> " + "<h3> Update Game Menu for " + request.getSession(false).getAttribute("username") + ", game " + request.getParameter("gameid") + "</h3>");        
+        
+        FileInputStream is =
+		        new FileInputStream("/Users/Rohan/Documents/cs4640/apache/webapps/cs4640/Jeopardy_v4/src/postData.txt");
         if (is != null) {
             InputStreamReader isr = new InputStreamReader(is);
             BufferedReader reader = new BufferedReader(isr);
             String text;
             int counter = 0;
+            boolean isGameIdValid = false;
                         
             while ((text = reader.readLine()) != null) {
-            	if(text.isEmpty()) {
-            		out.println("</td>"
-            				+ "<td><label>Row </label> <input type = \"text\" name = \"row" +  "\" ></input></td>"
-            				+ "<td><label>Column </label> <input type = \"text\" name = \"column" +  "\" ></input></td>"
-            				+ "<td><label>Score </label> <input type = \"text\" name = \"score" +  "\" ></input></td>"
-            				+ "</tr>");
-            	} else if (text.contains("Submission")) {
-            		out.println("<tr><td name=\"submission\" >");
-                	counter++;
-            	} else if(text.contains("Submitted Question")) { 
-            		out.println("<strong>"+text.substring(0,19)+"</strong>  <input name=\"question" +  "\" value=\" " + text.substring(22)+"\"><br>");
-            	} else if(text.contains("Correct Option")) {
-            		out.println("<strong>"+text.substring(0,15)+"</strong>  <input name=\"answer" +  "\" value=\" " + text.substring(18)+"\"><br>");
-            	} else if(text.contains("Submitted Answer")) {
-            		out.println("<strong>"+text.substring(0,17)+"</strong>  <input name=\"answer" +  "\" value=\" " + text.substring(20)+"\"><br>");
+            	if(text.contains("GameID")) {
+            		isGameIdValid = request.getParameter("gameid") == text.substring(8);
+            	}
+            	if(isGameIdValid == true) {
+            		if (text.contains("Question")) {
+	            		out.println("<tr><td name=\"submission\" >");
+	            		String[] data = text.split(";");
+	            		out.println("<strong>" + data[0].substring(0, 9) + "</strong>  <input name=\"question\" value=\" " + data[0].substring(10)+"\"><br>");
+	            		out.println("<strong>" + data[1].substring(0, 7) + "</strong>  <input name=\"answer\" value=\" " + data[1].substring(8)+"\"><br>");
+	            		out.println("<td><label>Row </label> <input type = \"text\" name = \"row\" value=\"" + data[2].substring(5) + "\" ></td>"
+	            				+ "<td><label>Column </label> <input type = \"text\" name = \"column\" value=\"" + data[3].substring(5) + "\" ></td>"
+	            				+ "<td><label>Score </label> <input type = \"text\" name = \"score\" value=\"" + data[4].substring(8) + "\" ></td>"
+	            				+ "</tr>");
+	            		isGameIdValid = false;
+            		}
             	}
         	}
-            System.out.print(request.getParameter("gameid"));
             out.println("<input hidden name=\"count\" value=\"" + counter + "\">"
             		+ "<input hidden name=\"gameid\" value=\"" + request.getParameter("gameid") + "\">");
         }
@@ -105,10 +109,32 @@ public class UpdateGameServlet extends HttpServlet {
         response.setContentType ("text/html");
         PrintWriter out = response.getWriter();
         
+        // Delete game id line
+        File inputFile = new File("/Users/Rohan/Documents/cs4640/apache/webapps/cs4640/Jeopardy_v4/src/postData.txt");
+		File tempFile = new File("/Users/Rohan/Documents/cs4640/apache/webapps/cs4640/Jeopardy_v4/src/postData.txt");
+
+		BufferedReader reader = new BufferedReader(new FileReader(inputFile));
+		BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile));
+		String lineToRemove = "GameID: "+ request.getParameter("gameid");
+		String currentLine;
+
+		while((currentLine = reader.readLine()) != null) {
+		    // trim newline when comparing with lineToRemove
+		    String trimmedLine = currentLine.trim();		
+		    
+		    if(trimmedLine.equals(lineToRemove)) continue;
+		    	writer.write(currentLine + System.getProperty("line.separator"));	
+		  
+		}
+		writer.close(); 
+		reader.close(); 
+		boolean successful = tempFile.renameTo(inputFile);
+        
+        
         // FILE OUTPUT BASED ON POST DATA       
         FileWriter fileoutput = new FileWriter("/Users/Rohan/Documents/cs4640/apache/webapps/cs4640/Jeopardy_v4/src/postData.txt", true);
-        fileoutput.write("\nUsername: " + request.getSession(false).getAttribute("username") + "\n");
-        fileoutput.write("GameID: " + (Integer.parseInt(request.getParameter("gameid"))+1) + "\n");
+        fileoutput.write("\nGameID: " + request.getParameter("gameid") + "\n");
+        fileoutput.write("Username: " + request.getSession(false).getAttribute("username") + "\n");
         	
         
         String[] rows = request.getParameterValues("row");
@@ -158,7 +184,7 @@ public class UpdateGameServlet extends HttpServlet {
     	out.println("<html> <body> <center>" 
     	+ "<h3>Jeopardy Game Board by Vamshi Garikapati and Rohan Raval </h3><br>"
     	+ "	<table class=\"table\" bgcolor=\"#060CE9\" style =\"border:2px solid black; font-size: 30px; font-family: Arial, Helvetica, sans-serif; \" table-align =\"center\" width = \"50%\"> "
-    	+ " <form method=\"GET\" action = \"CreateGameServlet\" >");
+    	+ " <form method=\"GET\" action = \"UpdateGameServlet\" >");
     	
     	//print grid into table
     	for(int currRow = 1; currRow <= rowMax; currRow++) {
@@ -169,8 +195,9 @@ public class UpdateGameServlet extends HttpServlet {
     		out.println("</tr>");
     	}
     	
-    	out.println("</table>"
-    			+ "<button class=\"btn btn-primary\"> Go Back </button>"
+    	out.println("</table><br>"
+    			+ "<input hidden name=\"gameid\" value=\"" + request.getParameter("gameid") + "\" >"
+    			+ "<button type=\"submit\" class=\"btn btn-primary\"> Go Back </button>"
     			+ "</form>"
     			+ "</center>"
     			+ "</body> </html>");

@@ -55,7 +55,7 @@ public class CreateGameServlet extends HttpServlet {
         out.println("<body> "
         		+ " <center> "
         		+ "	<form method=\"post\">"
-        	     + " <table class=\"table\" border = \"3\" table-align =\"center\"> " + "<h3> Jeopardy Menu by Vamshi Garikapati and Rohan Raval </h3>");        
+        		+ " <table class=\"table\" border = \"3\" table-align =\"center\"> " + "<h3> Create Game Menu for " + request.getSession().getAttribute("username") + "</h3>");        
         URL url = new URL("http://plato.cs.virginia.edu/~rsr3ve/cs4640/Jeopardy_v3/submission.txt");
         java.io.InputStream is = url.openStream();
         if (is != null) {
@@ -82,9 +82,9 @@ public class CreateGameServlet extends HttpServlet {
             		out.println("<strong>"+text.substring(0,17)+"</strong>  <input name=\"answer" +  "\" value=\" " + text.substring(20)+"\"><br>");
             	}
         	}
-            System.out.print(request.getParameter("gameid"));
+            System.out.print(request.getSession(false).getAttribute("highest_gameid"));
             out.println("<input hidden name=\"count\" value=\"" + counter + "\">"
-            		+ "<input hidden name=\"gameid\" value=\"" + request.getParameter("gameid") + "\">");
+            		+ "<input hidden name=\"gameid\" value=\"" + request.getSession(false).getAttribute("highest_gameid") + "\">");
         }
         out.println("</table>"
         		+ "<button type=\"submit\" class=\"btn btn-primary\" formaction=\"http://plato.cs.virginia.edu/~rsr3ve/cs4640/Jeopardy_v3/create_question.php\">Add Q/A</button>  "
@@ -107,8 +107,8 @@ public class CreateGameServlet extends HttpServlet {
         
         // FILE OUTPUT BASED ON POST DATA       
         FileWriter fileoutput = new FileWriter("/Users/Rohan/Documents/cs4640/apache/webapps/cs4640/Jeopardy_v4/src/postData.txt", true);
-        fileoutput.write("\nUsername: " + request.getSession(false).getAttribute("username") + "\n");
-        fileoutput.write("GameID: " + (Integer.parseInt(request.getParameter("gameid"))+1) + "\n");
+        fileoutput.write("\nGameID: " + (Integer.parseInt(request.getParameter("gameid"))+1) + "\n");
+        fileoutput.write("Username: " + request.getSession(false).getAttribute("username") + "\n");
         	
         
         String[] rows = request.getParameterValues("row");
@@ -158,7 +158,7 @@ public class CreateGameServlet extends HttpServlet {
     	out.println("<html> <body> <center>" 
     	+ "<h3>Jeopardy Game Board by Vamshi Garikapati and Rohan Raval </h3><br>"
     	+ "	<table class=\"table\" bgcolor=\"#060CE9\" style =\"border:2px solid black; font-size: 30px; font-family: Arial, Helvetica, sans-serif; \" table-align =\"center\" width = \"50%\"> "
-    	+ " <form method=\"GET\" action = \"CreateGameServlet\" >");
+    	+ " <form method=\"GET\" action = \"BrowseGameServlet\" >");
     	
     	//print grid into table
     	for(int currRow = 1; currRow <= rowMax; currRow++) {
@@ -169,8 +169,8 @@ public class CreateGameServlet extends HttpServlet {
     		out.println("</tr>");
     	}
     	
-    	out.println("</table>"
-    			+ "<button class=\"btn btn-primary\"> Go Back </button>"
+    	out.println("</table><br>"
+    			+ "<button type=\"submit\" class=\"btn btn-primary\"> Go Back </button>"
     			+ "</form>"
     			+ "</center>"
     			+ "</body> </html>");

@@ -47,7 +47,7 @@ public class LoginServlet extends HttpServlet {
 					+ "<link href=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css\" rel=\"stylesheet\" integrity=\"sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u\" crossorigin=\"anonymous\">"
 					+ "</head>");
      
-        out.println("<body>"
+        out.println("<body style=\"padding-left:30px;\">"
         		+ "		<h3>Welcome to Jeopardy!</h3>"
         		+ "		<h4>by Vamshi Garikapati (vkg5xt) and Rohan Raval (rsr3ve) </h4><br>"
         		+ "		<form method='post' class=\"form\">"
