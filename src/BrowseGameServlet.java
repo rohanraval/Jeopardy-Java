@@ -95,9 +95,9 @@ public class BrowseGameServlet extends HttpServlet {
       						+ "</td>"
       						+ "<td>" 
 	          				+ "<form method=\"GET\">");
-	                  out.println(	"<button class=\"btn btn-primary\"> Play </button>");    
+		    		  out.println("<input hidden name=\"gameid\" value=\"" + gameID + "\" >");
+	                  out.println(	"<button class=\"btn btn-primary\" formaction=\"startGame.jsp\" method=\"POST\" > Play </button>");    
 			    	  if(request.getSession(false).getAttribute("username").equals(user)) {
-			    		  out.println("<input hidden name=\"gameid\" value=\"" + gameID + "\" >");
 			    		  out.println("<button class=\"btn btn-primary\" formaction=\"UpdateGameServlet\"> Update </button>          			"
 		                    		+ "<button class=\"btn btn-primary\" formaction=\"DeleteGameServlet\"> Delete </button>");
 			          }

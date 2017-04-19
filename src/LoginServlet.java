@@ -128,8 +128,8 @@ public class LoginServlet extends HttpServlet {
         // else user is signing up (creating new account)
         else {
         	// Write Sign Up Post data to user-info.txt file      
-            FileWriter fileoutput = new FileWriter("/Users/Rohan/Documents/cs4640/apache/webapps/cs4640/Jeopardy_v5/src/user-info.txt", true);
-            fileoutput.write(request.getParameter("username") + "," + request.getParameter("password") + "\n");	
+            FileWriter fileoutput = new FileWriter("/Users/Rohan/Documents/cs4640/apache/webapps/cs4640/Jeopardy_v4/src/user-info.txt", true);
+            fileoutput.write("\n" + request.getParameter("username") + "," + request.getParameter("password"));	
         	fileoutput.close();
         	
         	//if old session exists, delete it
