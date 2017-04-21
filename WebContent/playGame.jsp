@@ -12,7 +12,10 @@
 </html>
 
 <%
+	// Number of teams input validation
+		// if number of teams is not entered correctly, redirect to startGame.jsp
 	if(request.getParameter("numteams") == null || request.getParameter("numteams") == "" || Integer.parseInt(request.getParameter("numteams")) > 4 || Integer.parseInt(request.getParameter("numteams")) < 1) {
-		
+		response.sendRedirect("http://localhost:8080/Jeopardy_v4/startGame.jsp?id=" + request.getParameter("id"));
 	}
 %>
+

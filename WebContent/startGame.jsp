@@ -10,13 +10,16 @@
 <title>Jeopardy! Start Game</title>
 </head>
 <body>
-	<h1>Welcome to Jeopardy Game #<% out.println(request.getParameter("gameid")); %>, <% out.println(request.getSession(false).getAttribute("username")); %> </h1>
+	<% 	int gameid = Integer.parseInt(request.getParameter("id"));
+		String username = (request.getSession(false).getAttribute("username")) + "";
+	%>
+	<h1>Welcome to Jeopardy Game #<% out.println(gameid); %>, <% out.println(username); %> </h1>
 	<br>
 	<br>
-	<form method=POST action="playGame.jsp">
+	<form method=POST action="playGame.jsp?id=<% out.println(gameid); %>">
 		<label>Enter the number of teams:</label><br>
 		<input type="text" name="numteams" ><br><br>
-		<input hidden type="text" name="gameid" value="<% request.getParameter("gameid"); %>">
+		<input hidden type="text" name="gameid" value="<% out.println(gameid); %>">
 		<input type="submit" class="btn btn-success" value="Start!">
 	</form>
 	
