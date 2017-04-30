@@ -5,7 +5,8 @@
 
 <%
 	String gameid = session.getAttribute("gameid") + "";
-	session.setAttribute("numteams", request.getParameter("numteams"));
+	if(request.getParameter("numteams") != null)
+		session.setAttribute("numteams", request.getParameter("numteams"));
 	String numteams = session.getAttribute("numteams") + "";
 	// Number of teams input validation
 		// if number of teams is not entered correctly, redirect to startGame.jsp
@@ -104,7 +105,7 @@
 	  			System.out.println("Row:" + i + " Col:" + j + " question:" + board_questions[i][j]);
 	  		}
 	  	}
-	  	System.out.println(rowMax + "," + colMax);
+	  	//System.out.println(rowMax + "," + colMax);
 	  
   	%>
   	<center>
@@ -122,11 +123,11 @@
 					if(board_scores[currRow][currCol] != 0)
 						out.print("<input type=\"submit\" name=\"score\" value=\"" + board_scores[currRow][currCol] + "\">");
 					out.println("</center></br></font></td>");
-					System.out.println("Score:" + board_scores[currRow][currCol]);
+					//System.out.println("Score:" + board_scores[currRow][currCol]);
 					out.println("<input hidden type=\"text\" name=\"question\" value=\"" + board_questions[currRow][currCol] + "\" >");
-					System.out.println("Question:" + board_questions[currRow][currCol]);
+					//System.out.println("Question:" + board_questions[currRow][currCol]);
 					out.println("<input hidden type=\"text\" name=\"answer\" value=\"" + board_answers[currRow][currCol] + "\" >");
-					System.out.println("Answer:" + board_answers[currRow][currCol]);
+					//System.out.println("Answer:" + board_answers[currRow][currCol]);
 		%>
 				</form>
 		<%
