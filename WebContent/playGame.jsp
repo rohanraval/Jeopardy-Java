@@ -87,8 +87,8 @@
 	    for(int currRow = 1; currRow <= rowMax; currRow++) {
 			for(int currCol = 1; currCol <= colMax; currCol++) {
 				board_scores[currRow][currCol] = 0;
-				board_questions[currRow][currCol] = "hi";
-				board_answers[currRow][currCol] = "hello";
+				board_questions[currRow][currCol] = "";
+				board_answers[currRow][currCol] = "";
 			}
 		}
 		
@@ -113,21 +113,25 @@
 			for(int currRow = 1; currRow <= rowMax; currRow++) {
 				out.println("<tr style =\"border:1px solid black;\" width = \"100%\">");
 		%>
-		<form method=POST action="questionInfo.jsp">
 		<%
 				for(int currCol = 1; currCol <= colMax; currCol++) {
-					out.println("<td style =\"border:1px solid black;\" ><font color=\"yellow\"><br><center><input type=\"submit\" name=\"score\" value=\"" + board_scores[currRow][currCol] + "\"></center></br></font></td>");
+		%>
+				<form method=POST action="questionInfo.jsp">
+		<%
+					out.print("<td style =\"border:1px solid black;\" ><font color=\"yellow\"><br><center>");
+					if(board_scores[currRow][currCol] != 0)
+						out.print("<input type=\"submit\" name=\"score\" value=\"" + board_scores[currRow][currCol] + "\">");
+					out.println("</center></br></font></td>");
 					System.out.println("Score:" + board_scores[currRow][currCol]);
 					out.println("<input hidden type=\"text\" name=\"question\" value=\"" + board_questions[currRow][currCol] + "\" >");
 					System.out.println("Question:" + board_questions[currRow][currCol]);
 					out.println("<input hidden type=\"text\" name=\"answer\" value=\"" + board_answers[currRow][currCol] + "\" >");
 					System.out.println("Answer:" + board_answers[currRow][currCol]);
-
+		%>
+				</form>
+		<%
 				}
-	    		out.println("</tr>");
-	    %> 	
-	    </form>
-	    <%
+	    		out.println("</tr>");	
 			}
 		%>
 	</table>
