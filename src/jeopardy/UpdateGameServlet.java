@@ -1,3 +1,4 @@
+package jeopardy;
 // Vamshi Garikapati (vkg5xt) and Rohan Raval (rsr3ve)
 
 import java.io.BufferedReader;

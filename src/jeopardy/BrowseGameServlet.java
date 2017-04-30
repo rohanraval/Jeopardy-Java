@@ -1,5 +1,4 @@
-
-
+package jeopardy;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -15,8 +14,14 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.omg.CORBA.portable.InputStream;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * Servlet implementation class BrowseGameServlet
@@ -48,6 +53,7 @@ public class BrowseGameServlet extends HttpServlet {
         response.setContentType ("text/html");
         PrintWriter out = response.getWriter();
         
+        
         out.println("<html>"
         			+ "<head>"
         			+ "<meta charset=\"utf-8\">"
@@ -61,10 +67,58 @@ public class BrowseGameServlet extends HttpServlet {
         out.println("<body> "
         		+ " <center> "
         		+ "	<form method=\"post\">"
-        	     + " <table class=\"table\" border = \"3\"  table-align =\"center\"> " + "<h3> Browse Menu for " + request.getSession().getAttribute("username") + "</h3>");        
+        	    + " <table class=\"table\" border = \"3\"  table-align =\"center\"> " + "<h3> Browse Menu for " + request.getSession().getAttribute("username") + "</h3>"
+        	    );        
+        out.println("<tr>"
+    			+ "<th style = \"padding: 0\"><h3>Username</h3></th>" 
+  				+ "<td style = \"padding: 0\"><h3>Game ID</h3></td>"
+  				+ "<td style = \"padding: 0\"><h3>Options</h3></td>"
+  				+ "</tr>"
+  				);
+        
+        String highest_gameid = "";
+        
+        try {
+        	File inputFile = new File("/Users/Rohan/Documents/cs4640/apache/webapps/cs4640/Jeopardy_v4/src/gameData.xml");
+        	DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+	        DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+	        Document doc = docBuilder.parse(inputFile);
+            Element rootElement = doc.getDocumentElement();
+            
+            NodeList nList = doc.getElementsByTagName("game");
+            for (int i = 0; i < nList.getLength(); i++) 
+            {
+               Node nd = nList.item(i);
+               if (nd.getNodeType() == Node.ELEMENT_NODE) 
+               {
+                  Element ele = (Element)nd;
+                  String username = ele.getAttribute("username");
+                  String gameID = ele.getAttribute("game_id");
+                  highest_gameid = gameID;
+                  out.println("<tr>"
+                  		+ "<td>" + username + "</td>"
+                        + "<td>" + gameID + "</td>"
+                        + "<td>"
+                        + "<form method=\"GET\">");
+	    		  out.println("<input hidden name=\"gameid\" value=\"" + gameID + "\" >");
+                  out.println("<button class=\"btn btn-primary\" formaction=\"startGame.jsp?id=" + gameID + "\" method=\"POST\" > Play </button>");    
+		    	  if(request.getSession(false).getAttribute("username").equals(username)) {
+		    		  out.println("<button class=\"btn btn-primary\" formaction=\"UpdateGameServlet\"> Update </button>          			"
+	                    		+ "<button class=\"btn btn-primary\" formaction=\"DeleteGameServlet\"> Delete </button>");
+		          }
+		    	  out.println("</form>" + "</td></tr>");
+		    	  
+                	           
 
+               }
+            }
+         } catch (Exception e) {
+            e.printStackTrace();
+         }
+        
+        /*
 		FileInputStream fis =
-		        new FileInputStream("/Users/Rohan/Documents/cs4640/apache/webapps/cs4640/Jeopardy_v4/src/postData.txt");
+		      new FileInputStream("/Users/Rohan/Documents/cs4640/apache/webapps/cs4640/Jeopardy_v4/src/postData.txt");
 		      InputStreamReader isr = new InputStreamReader(fis);
 		      BufferedReader reader = new BufferedReader(isr);		    	
 
@@ -108,6 +162,8 @@ public class BrowseGameServlet extends HttpServlet {
 	          				+ "</tr>");	
 			    	  }
 		      }
+		      
+ */
         out.println("</table>"
         		+ "<button type=\"submit\" formaction=\"CreateGameServlet\" formmethod=\"GET\" class=\"btn btn-primary\"> Create New Game </button> &nbsp;&nbsp;"
         		+ "<button type=\"submit\" formmethod=\"GET\" formaction=\"LogoutServlet\" class=\"btn btn-primary\"> Logout </button></form> "
@@ -117,8 +173,7 @@ public class BrowseGameServlet extends HttpServlet {
         out.close();
         
        // set session to most recent gameID
-       HttpSession session = request.getSession(false);
-       session.setAttribute("highest_gameid", gameID);
+       request.getSession(false).setAttribute("highest_gameid", highest_gameid);
 	}
 
 	/**

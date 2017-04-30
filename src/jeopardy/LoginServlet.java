@@ -1,3 +1,4 @@
+package jeopardy;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -12,6 +13,18 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
+import org.w3c.dom.Attr;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * Servlet implementation class LoginServlet
@@ -74,28 +87,54 @@ public class LoginServlet extends HttpServlet {
         response.setContentType ("text/html");
         PrintWriter out = response.getWriter();
         
+        String username = request.getParameter("username");
+    	String password = request.getParameter("password");
+        
         // check if user already has account
         if(request.getParameter("login").equals("Login")) { 
-        	String loginInfo = request.getParameter("username") + "," + request.getParameter("password");
         	
         	boolean isLoginValid = false;
         	
-        	try { // try to read in user-info.txt file, line by line, to check if account info is valid
-                File file = new File("/Users/Rohan/Documents/cs4640/apache/webapps/cs4640/Jeopardy_v4/src/user-info.txt");
-                FileReader fr = new FileReader(file);
-                BufferedReader br = new BufferedReader(fr);                                                 
-                String data;
-
-                while((data = br.readLine()) != null) 
+//        	try { // try to read in user-info.txt file, line by line, to check if account info is valid
+//                File file = new File("/Users/Rohan/Documents/cs4640/apache/webapps/cs4640/Jeopardy_v4/src/user-info.txt");
+//                FileReader fr = new FileReader(file);
+//                BufferedReader br = new BufferedReader(fr);                                                 
+//                String data;
+//
+//                while((data = br.readLine()) != null) 
+//                {
+//                    if(data.equals(loginInfo)) {
+//                    	isLoginValid = true;
+//                    	break;
+//                    }
+//                }                                
+//            } catch(IOException e) {
+//                System.out.println("invalid filepath!");
+//            }
+        	
+        	try {
+            	File inputFile = new File("/Users/Rohan/Documents/cs4640/apache/webapps/cs4640/Jeopardy_v4/src/user-info.xml");
+            	DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+    	        DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+    	        Document doc = docBuilder.parse(inputFile);
+                Element rootElement = doc.getDocumentElement();
+                
+                NodeList nList = doc.getElementsByTagName("user");
+                for (int i = 0; i < nList.getLength(); i++) 
                 {
-                    if(data.equals(loginInfo)) {
-                    	isLoginValid = true;
-                    	break;
-                    }
-                }                                
-            } catch(IOException e) {
-                System.out.println("invalid filepath!");
-            }
+                   Node nd = nList.item(i);
+                   if (nd.getNodeType() == Node.ELEMENT_NODE) 
+                   {
+                      Element ele = (Element)nd;
+                      String this_username = ele.getAttribute("username");
+                      String this_password = ele.getAttribute("password");
+                      if (this_username.equals(username) && this_password.equals(password))
+                    	  isLoginValid = true;
+                   }
+                }
+             } catch (Exception e) {
+                e.printStackTrace();
+             }
         	
         	
         	if(isLoginValid == false) { //if login invalid... 
@@ -127,10 +166,45 @@ public class LoginServlet extends HttpServlet {
         
         // else user is signing up (creating new account)
         else {
-        	// Write Sign Up Post data to user-info.txt file      
-            FileWriter fileoutput = new FileWriter("/Users/Rohan/Documents/cs4640/apache/webapps/cs4640/Jeopardy_v4/src/user-info.txt", true);
-            fileoutput.write("\n" + request.getParameter("username") + "," + request.getParameter("password"));	
-        	fileoutput.close();
+        	// Write Sign Up Post data to user-info.xml file    
+        	
+        	File inputFile = new File("/Users/Rohan/Documents/cs4640/apache/webapps/cs4640/Jeopardy_v4/src/user-info.xml");
+
+            try{
+    	        DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+    	        DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+    	        Document doc;
+    	        Element rootElement;
+    	        
+    	        if (! inputFile.exists()) {
+    	            doc = docBuilder.newDocument();
+    	            // root element
+    	            rootElement = doc.createElement("users");
+    	            doc.appendChild(rootElement);
+    	        }
+    	        
+    	        else {
+    	            doc = docBuilder.parse(inputFile);
+    	            rootElement = doc.getDocumentElement();
+    	        }
+    	        
+    	        // create new game element
+    	        Element user = doc.createElement("user");
+    	        user.setAttribute("username", username);
+    	        user.setAttribute("password", password);
+    	        rootElement.appendChild(user);
+    		
+        		// write the content into xml file
+    	        TransformerFactory transformerFactory = TransformerFactory.newInstance();
+    	        Transformer transformer = transformerFactory.newTransformer();
+    	        DOMSource source = new DOMSource(doc);
+    	        StreamResult result = new StreamResult(inputFile);
+    	        transformer.transform(source, result);
+            } catch(Exception e) {
+                e.printStackTrace();
+            }
+
+        	
         	
         	//if old session exists, delete it
         	HttpSession session = request.getSession(false);

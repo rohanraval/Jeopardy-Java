@@ -1,3 +1,4 @@
+package jeopardy;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -16,6 +17,17 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * Servlet implementation class DeleteGameServlet
@@ -29,15 +41,13 @@ public class DeleteGameServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     	ServletContext context = getServletContext();
-
-		  response.setContentType ("text/html");
-		 PrintWriter out = response.getWriter();
+		response.setContentType ("text/html");
+		PrintWriter out = response.getWriter();
 		 
-	        FileWriter fileoutput = new FileWriter("/Users/Rohan/Documents/cs4640/apache/webapps/cs4640/Jeopardy_v4/src/postData.txt", true);
-
-			String username = request.getSession(false).getAttribute("username").toString();
-			int gameid = Integer.parseInt(request.getParameter("gameid"));
-			out.println("Deleting game with: Username: " + username + " and GameID: " + gameid);	
+		String username = request.getSession(false).getAttribute("username").toString();
+		String gameID = request.getParameter("gameid");
+		out.println("Deleting game with: Username: " + username + " and GameID: " + gameID);
+			
 			/*FileInputStream fis =
 			        new FileInputStream("/Users/mac/Desktop/postData.txt");
 
@@ -56,7 +66,7 @@ public class DeleteGameServlet extends HttpServlet {
 			    	 line = line.replace("GameID: ", "replace");
 			      }/Users/mac/Desktop/postData.txt
 			
-			*/
+			
 			File inputFile = new File("/Users/Rohan/Documents/cs4640/apache/webapps/cs4640/Jeopardy_v4/src/postData.txt");
 			File tempFile = new File("/Users/Rohan/Documents/cs4640/apache/webapps/cs4640/Jeopardy_v4/src/postData2.txt");
 
@@ -76,8 +86,41 @@ public class DeleteGameServlet extends HttpServlet {
 			writer.close(); 
 			reader.close(); 
 			boolean successful = tempFile.renameTo(inputFile);
-
-			out.println("<br><br><form method=\"GET\" action=\"BrowseGameServlet\"><button type=\"submit\">Go Back</button></form>");
+*/
+		try {
+        	File inputFile = new File("/Users/Rohan/Documents/cs4640/apache/webapps/cs4640/Jeopardy_v4/src/gameData.xml");
+        	DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+	        DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+	        Document doc = docBuilder.parse(inputFile);
+            Element rootElement = doc.getDocumentElement();
+            
+            NodeList nList = doc.getElementsByTagName("game");
+            for (int i = 0; i < nList.getLength(); i++) 
+            {
+               Node nd = nList.item(i);
+               if (nd.getNodeType() == Node.ELEMENT_NODE) 
+               {
+                  Element ele = (Element)nd;
+                  String this_username = ele.getAttribute("username");
+                  String this_gameID = ele.getAttribute("game_id");
+                  if(username.equals(this_username) && gameID.equals(this_gameID)) {
+		    		  rootElement.removeChild(nd);
+                  }
+                	    
+               }
+            }
+            
+            // write the content into xml file
+	        TransformerFactory transformerFactory = TransformerFactory.newInstance();
+	        Transformer transformer = transformerFactory.newTransformer();
+	        DOMSource source = new DOMSource(doc);
+	        StreamResult result = new StreamResult(inputFile);
+	        transformer.transform(source, result);
+         } catch (Exception e) {
+            e.printStackTrace();
+         }
+		
+		out.println("<br><br><form method=\"GET\" action=\"BrowseGameServlet\"><button type=\"submit\">Go Back</button></form>");
 	}
 
 	/**

@@ -10,8 +10,9 @@
 <title>Jeopardy! Start Game</title>
 </head>
 <body>
-	<% 	int gameid = Integer.parseInt(request.getParameter("id"));
-		String username = (request.getSession(false).getAttribute("username")) + "";
+	<%	session.setAttribute("gameid", request.getParameter("id"));
+		int gameid = Integer.parseInt(session.getAttribute("gameid") + "");
+		String username = (session.getAttribute("username")) + "";
 	%>
 	<h1>Welcome to Jeopardy Game #<% out.println(gameid); %>, <% out.println(username); %> </h1>
 	<br>

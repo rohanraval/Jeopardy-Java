@@ -1,3 +1,4 @@
+package jeopardy;
 
 
 import java.io.IOException;
