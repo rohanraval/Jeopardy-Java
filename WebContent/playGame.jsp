@@ -44,7 +44,6 @@
 	       if (nd.getNodeType() == Node.ELEMENT_NODE) 
 	       {
 	          Element ele = (Element)nd;
-	      	System.out.println(gameid);
 	          if(ele.getAttribute("game_id").equals(gameid)) {
 	        	  NodeList cList = ele.getChildNodes();
 	        	  for(int j = 0; j < cList.getLength(); j++ ) {
@@ -113,20 +112,21 @@
   	<center>
 	<table style="background-color: blue; width:50%;">
 		<%
+			System.out.println(session.getAttribute("answered").toString());
 			for(int currRow = 1; currRow <= rowMax; currRow++) {
-				out.println("<tr style =\"border:1px solid black;\" width = \"100%\">");
+				out.println("<tr style =\"border:1px solid black;\" width = \"100%\" height = \"100px;\">");
 		%>
 		<%
 				for(int currCol = 1; currCol <= colMax; currCol++) {
 		%>
 				<form method=POST action="questionInfo.jsp">
-		
-					<td style="border:2px solid black; height:100px;">
+					<td style="border:2px solid black;">
 					<font color="yellow"><br>
 					<center>
-		<%			if(board_scores[currRow][currCol] != 0)
+		<%			if(board_scores[currRow][currCol] != 0 && !(session.getAttribute("answered").toString().contains("("+currRow+","+currCol+")")))
 						out.print("<input type=\"submit\" name=\"score\" value=\"" + board_scores[currRow][currCol] + "\">");
 					out.println("</center></br></font></td>");
+					out.println("<input hidden type=\"text\" name=\"rowcol\" value=\"" + "(" + currRow + "," + currCol + ")" + "\" >");
 					out.println("<input hidden type=\"text\" name=\"question\" value=\"" + board_questions[currRow][currCol] + "\" >");
 					out.println("<input hidden type=\"text\" name=\"answer\" value=\"" + board_answers[currRow][currCol] + "\" >");
 		%>
@@ -141,53 +141,51 @@
 	<table cellspacing=15>
 		<tr>
 		<% 
-		
 		// Display team names
 		for(int i = 1; i <= Integer.parseInt(numteams); i++) { %>
-		    <th> Team <%=i%></th>  
-		<% } %>
+		    <th> Team <%=i%></th> 
+		<%
+		} %>
 		 
 		<tr>
 		<% for(int i = 1; i <= Integer.parseInt(numteams); i++) { %>
-		    <td id = "team<%=i%>"> <center>
-		    <% 
-		    	String temp = "team"+i;
-		    	if(Integer.parseInt(session.getAttribute(temp).toString()) == 0) {
-		    %>
-		  			0 
-		  	<%
-		    	} else
-		    		Integer.parseInt(session.getAttribute(temp).toString()); 
-		    %>
-		    </center>
-		    </td>      
+		    <td id = "team<%=i%>">0</td>      
 		<% } %>
 		</tr>
-		     
-	    <tr>
+	     <tr>
 		<% for(int i = 1; i <= Integer.parseInt(numteams); i++) {%>    
-			<td>
-		    	<button onclick="inc(<%=i%>)" > + </button>
-		    	<button onclick="dec(<%=i%>)"> - </button>
-	    	</td> 
-	    <% } %>
-	     </tr>
-	     
+		    <td>
+		    <button onclick="inc(<%=i%>)" > + </button> <button onclick="dec(<%=i%>)"> - </button>  </td> 
+		   
+		    <% } %>
+    	 </tr>
 		</table>
 		
+		<form action="BrowseGameServlet" method="GET">
+			<input type=submit value="Go Back to Browse">
+		</form>
+		
+
+		
 		<script type="text/javascript">
+		
 			function inc(x) {
-		    	if((document.getElementById("team"+x).innerText) >= 0)
-		    		(document.getElementById("team"+x).innerText)++;
-			} 
-			function dec(x) {
-				if((document.getElementById("team"+x).innerText) > 0)
-		   			(document.getElementById("team"+x).innerText)--;
+				var temp = parseInt(document.getElementById("team"+x).innerText);
+				temp += 100;
+		
+				    if((document.getElementById("team"+x).innerText) >= 0)
+				       (document.getElementById("team"+x).innerText)=(temp.toString());
 			}
+			
+			function dec(x) {
+				var temp = parseInt(document.getElementById("team"+x).innerText);
+				temp -= 100;
+				if((document.getElementById("team"+x).innerText) > 0)
+			   		(document.getElementById("team"+x).innerText)=(temp.toString());
+			}
+			
 	    </script>
 	
 	</center>
 </body>
 </html>
-
-	
