@@ -5,7 +5,7 @@
 
 <%
 	String gameid = session.getAttribute("gameid") + "";
-	if(request.getParameter("numteams") != null)
+	if(request.getParameter("numteams") != null || request.getParameter("numteams") != "")
 		session.setAttribute("numteams", request.getParameter("numteams"));
 	String numteams = session.getAttribute("numteams") + "";
 	// Number of teams input validation
@@ -14,6 +14,15 @@
 		response.sendRedirect("http://localhost:8080/Jeopardy_v4/startGame.jsp?id=" + gameid);
 	}
 %>
+
+<%
+	// Number of teams session setting
+	for(int i = 0; i <= Integer.parseInt(numteams); i++)
+		if(session.getAttribute("team"+i) != null || session.getAttribute("team"+i) != "")
+			session.setAttribute("team"+i ,0);
+
+%>
+
 <%
 	ArrayList<questionBean> qList = new ArrayList<questionBean>();
 
@@ -100,13 +109,6 @@
 			board_answers[qList.get(i).getRow()][qList.get(i).getColumn()] = qList.get(i).getAnswer();
 		}
 	  
-	  	for(int i = 0; i < board_questions.length; i++){
-	  		for(int j =0; j < board_questions[i].length; j++){
-	  			System.out.println("Row:" + i + " Col:" + j + " question:" + board_questions[i][j]);
-	  		}
-	  	}
-	  	//System.out.println(rowMax + "," + colMax);
-	  
   	%>
   	<center>
 	<table style="background-color: blue; width:50%;">
@@ -118,16 +120,15 @@
 				for(int currCol = 1; currCol <= colMax; currCol++) {
 		%>
 				<form method=POST action="questionInfo.jsp">
-		<%
-					out.print("<td style =\"border:1px solid black;\" ><font color=\"yellow\"><br><center>");
-					if(board_scores[currRow][currCol] != 0)
+		
+					<td style="border:2px solid black; height:100px;">
+					<font color="yellow"><br>
+					<center>
+		<%			if(board_scores[currRow][currCol] != 0)
 						out.print("<input type=\"submit\" name=\"score\" value=\"" + board_scores[currRow][currCol] + "\">");
 					out.println("</center></br></font></td>");
-					//System.out.println("Score:" + board_scores[currRow][currCol]);
 					out.println("<input hidden type=\"text\" name=\"question\" value=\"" + board_questions[currRow][currCol] + "\" >");
-					//System.out.println("Question:" + board_questions[currRow][currCol]);
 					out.println("<input hidden type=\"text\" name=\"answer\" value=\"" + board_answers[currRow][currCol] + "\" >");
-					//System.out.println("Answer:" + board_answers[currRow][currCol]);
 		%>
 				</form>
 		<%
@@ -136,6 +137,55 @@
 			}
 		%>
 	</table>
+	<br>
+	<table cellspacing=15>
+		<tr>
+		<% 
+		
+		// Display team names
+		for(int i = 1; i <= Integer.parseInt(numteams); i++) { %>
+		    <th> Team <%=i%></th>  
+		<% } %>
+		 
+		<tr>
+		<% for(int i = 1; i <= Integer.parseInt(numteams); i++) { %>
+		    <td id = "team<%=i%>"> <center>
+		    <% 
+		    	String temp = "team"+i;
+		    	if(Integer.parseInt(session.getAttribute(temp).toString()) == 0) {
+		    %>
+		  			0 
+		  	<%
+		    	} else
+		    		Integer.parseInt(session.getAttribute(temp).toString()); 
+		    %>
+		    </center>
+		    </td>      
+		<% } %>
+		</tr>
+		     
+	    <tr>
+		<% for(int i = 1; i <= Integer.parseInt(numteams); i++) {%>    
+			<td>
+		    	<button onclick="inc(<%=i%>)" > + </button>
+		    	<button onclick="dec(<%=i%>)"> - </button>
+	    	</td> 
+	    <% } %>
+	     </tr>
+	     
+		</table>
+		
+		<script type="text/javascript">
+			function inc(x) {
+		    	if((document.getElementById("team"+x).innerText) >= 0)
+		    		(document.getElementById("team"+x).innerText)++;
+			} 
+			function dec(x) {
+				if((document.getElementById("team"+x).innerText) > 0)
+		   			(document.getElementById("team"+x).innerText)--;
+			}
+	    </script>
+	
 	</center>
 </body>
 </html>
